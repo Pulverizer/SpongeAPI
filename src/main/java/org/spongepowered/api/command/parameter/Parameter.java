@@ -64,6 +64,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -770,6 +771,13 @@ public interface Parameter {
     Text getUsage(CommandCause cause);
 
     /**
+     * Gets whether this parameter is optional.
+     *
+     * @return true if optional, else false.
+     */
+    boolean isOptional();
+
+    /**
      * A {@link Key}
      *
      * @param <T> The type.
@@ -859,13 +867,6 @@ public interface Parameter {
          * @return the predicate
          */
         Predicate<CommandCause> getRequirement();
-
-        /**
-         * Gets whether this parameter is optional.
-         *
-         * @return true if optional, else false.
-         */
-        boolean isOptional();
 
         /**
          * Builds a {@link Parameter} from constituent components.
@@ -1103,6 +1104,13 @@ public interface Parameter {
          * @return The command to run.
          */
         Command getCommand();
+
+        /**
+         * The alias for the subcommand.
+         *
+         * @return The subcommand.
+         */
+        Set<String> getAliases();
 
         interface Builder extends ResettableBuilder<Subcommand, Builder> {
 
