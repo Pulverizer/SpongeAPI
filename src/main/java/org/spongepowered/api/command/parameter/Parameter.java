@@ -25,6 +25,7 @@
 package org.spongepowered.api.command.parameter;
 
 import com.google.common.reflect.TypeToken;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
@@ -738,40 +739,21 @@ public interface Parameter {
     }
 
     /**
-     * Parses the next element(s) in the {@link CommandContext}
+     * Gets whether this parameter can be considered terminal.
      *
-     * @param reader The {@link ArgumentReader.Mutable} containing the strings
-     *               that need to be parsed
-     * @param context The {@link CommandContext.Builder} that contains the
-     *                current state of the execution
-     * @throws ArgumentParseException thrown if the parameter could not be
-     *      parsed
-     */
-    void parse(ArgumentReader.Mutable reader, CommandContext.Builder context) throws ArgumentParseException;
-
-    /**
-     * Returns potential completions of the current tokenized argument.
+     * <p>A terminal parameter will pass control to the command's associated
+     * {@link CommandExecutor} if the parameter consumes the end of an input
+     * string.</p>
      *
-     * @param reader The {@link ArgumentReader} containing the strings that need
-     *               to be parsed
-     * @param context The {@link CommandContext} that contains the
-     *                current state of the execution.
-     * @return The potential completions.
-     * @throws ArgumentParseException thrown if the parameter could not be
-     *      parsed
+     * @return true if terminal, else false.
      */
-    List<String> complete(ArgumentReader.Immutable reader, CommandContext context) throws ArgumentParseException;
-
-    /**
-     * Gets the usage of this parameter.
-     *
-     * @param cause The {@link CommandCause} that requested the usage
-     * @return The usage
-     */
-    Text getUsage(CommandCause cause);
+    boolean isTerminal();
 
     /**
      * Gets whether this parameter is optional.
+     *
+     * <p>An optional parameter will not throw an exception if it cannot parse
+     * an input, instead passing control to another parameter.</p>
      *
      * @return true if optional, else false.
      */
@@ -814,7 +796,7 @@ public interface Parameter {
              * @param <T> The type of the value represented by the key
              * @return The built {@link Key}
              */
-            <T> Key<T> build(String key, TypeToken<T> typeToken);
+            <T> Key<T> build(@NonNull String key, @NonNull TypeToken<T> typeToken);
         }
 
     }
@@ -867,6 +849,39 @@ public interface Parameter {
          * @return the predicate
          */
         Predicate<CommandCause> getRequirement();
+
+        /**
+         * Parses the next element(s) in the {@link CommandContext}
+         *
+         * @param reader The {@link ArgumentReader.Mutable} containing the strings
+         *               that need to be parsed
+         * @param context The {@link CommandContext.Builder} that contains the
+         *                current state of the execution
+         * @throws ArgumentParseException thrown if the parameter could not be
+         *      parsed
+         */
+        void parse(ArgumentReader.@NonNull Mutable reader, CommandContext.@NonNull Builder context) throws ArgumentParseException;
+
+        /**
+         * Returns potential completions of the current tokenized argument.
+         *
+         * @param reader The {@link ArgumentReader} containing the strings that need
+         *               to be parsed
+         * @param context The {@link CommandContext} that contains the
+         *                current state of the execution.
+         * @return The potential completions.
+         * @throws ArgumentParseException thrown if the parameter could not be
+         *      parsed
+         */
+        List<String> complete(ArgumentReader.@NonNull Immutable reader, @NonNull CommandContext context) throws ArgumentParseException;
+
+        /**
+         * Gets the usage of this parameter.
+         *
+         * @param cause The {@link CommandCause} that requested the usage
+         * @return The usage
+         */
+        Text getUsage(CommandCause cause);
 
         /**
          * Builds a {@link Parameter} from constituent components.
@@ -1159,7 +1174,7 @@ public interface Parameter {
          *
          * @return This builder, for chaining
          */
-        SequenceBuilder optional();
+        SequenceBuilder terminal();
 
         /**
          * Sets that this parameter is weak optional and will be ignored if it
@@ -1167,7 +1182,7 @@ public interface Parameter {
          *
          * @return This builder, for chaining
          */
-        SequenceBuilder optionalWeak();
+        SequenceBuilder optional();
 
         /**
          * Defines the next parameter in the parameter sequence.
@@ -1228,7 +1243,7 @@ public interface Parameter {
          *
          * @return This builder, for chaining
          */
-        FirstOfBuilder optional();
+        FirstOfBuilder terminal();
 
         /**
          * Sets that this parameter is weak optional and will be ignored if it
@@ -1236,7 +1251,7 @@ public interface Parameter {
          *
          * @return This builder, for chaining
          */
-        FirstOfBuilder optionalWeak();
+        FirstOfBuilder optional();
 
         /**
          * Adds a parameter that can be used to parse an argument. Parameters
