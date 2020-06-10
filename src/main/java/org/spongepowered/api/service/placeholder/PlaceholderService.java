@@ -31,6 +31,7 @@ import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.channel.MessageReceiver;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * A service that handles the parsing of placeholder tokens. This service is
@@ -77,6 +78,29 @@ public interface PlaceholderService {
      * returned by {@link #getParser(String)}</p>
      *
      * @param token The token to obtain
+     * @param associatedObjectSupplier A {@link Supplier} that provides tokens
+     *      should use as a context
+     * @return The parsed {@link Text}.
+     */
+    Optional<PlaceholderText> parse(String token, Supplier<Object> associatedObjectSupplier);
+
+    /**
+     * Gets a {@link PlaceholderText} based on the provided token,
+     * using the provided {@link Object} for context.
+     *
+     * <p>It is entirely up to the implementation of the service to determine
+     * how to select a placeholder if the supplied {@code token} is not a
+     * known ID for a registered {@link PlaceholderParser}.</p>
+     *
+     * <p>The {@link PlaceholderParser} selected by the {@code token} to
+     * generate this {@link PlaceholderText} must be the same as the one
+     * returned by {@link #getParser(String)}</p>
+     *
+     * <p>If your associated object is a game object that you should not store,
+     * then use {@link #parse(String, Supplier)} and provide a way to re-create
+     * or re-obtain the object instead.</p>
+     *
+     * @param token The token to obtain
      * @param associatedObject The source that tokens should use as a context
      * @return The parsed {@link Text}.
      */
@@ -114,12 +138,37 @@ public interface PlaceholderService {
      * generate this {@link PlaceholderText} must be the same as the one
      * returned by {@link #getParser(String)}</p>
      *
+     * <p>If your associated object is a game object that you should not store,
+     * then use {@link #parse(String, String, Supplier)} and provide a way to
+     * re-create or re-obtain the object instead.</p>
+     *
      * @param token The token name
      * @param argumentString A string containing arguments for the token
      * @param associatedObject The object that tokens should use as a context
      * @return The parsed {@link TextRepresentable}, if any.
      */
     Optional<PlaceholderText> parse(String token, String argumentString, Object associatedObject);
+
+    /**
+     * Gets a {@link PlaceholderText} based on the provided token,
+     * using the provided {@link Object} and supplied argument string
+     * for context.
+     *
+     * <p>It is entirely up to the implementation of the service to determine
+     * how to select a placeholder if the supplied {@code token} is not a
+     * known ID for a registered {@link PlaceholderParser}.</p>
+     *
+     * <p>The {@link PlaceholderParser} selected by the {@code token} to
+     * generate this {@link PlaceholderText} must be the same as the one
+     * returned by {@link #getParser(String)}</p>
+     *
+     * @param token The token name
+     * @param argumentString A string containing arguments for the token
+     * @param associatedObjectSupplier A {@link Supplier} that provides tokens
+     *      should use as a context
+     * @return The parsed {@link TextRepresentable}, if any.
+     */
+    Optional<PlaceholderText> parse(String token, String argumentString, Supplier<Object> associatedObjectSupplier);
 
     /**
      * Gets the {@link PlaceholderParser} that this {@link PlaceholderService}

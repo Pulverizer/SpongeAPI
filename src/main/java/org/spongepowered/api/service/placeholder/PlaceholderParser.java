@@ -25,14 +25,29 @@
 package org.spongepowered.api.service.placeholder;
 
 import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.ResettableBuilder;
 import org.spongepowered.api.util.annotation.CatalogedBy;
+
+import java.util.function.Function;
 
 /**
  * Provides the logic of how to parse a placeholder token.
  */
 @CatalogedBy(PlaceholderParsers.class)
 public interface PlaceholderParser extends CatalogType {
+
+    /**
+     * Returns a {@link Builder} that allows for the creation of simple
+     * {@link PlaceholderParser}s.
+     *
+     * @return The {@link Builder}
+     */
+    static Builder builder() {
+        return Sponge.getRegistry().createBuilder(Builder.class);
+    }
 
     /**
      * Creates a {@link Text} based on the provided {@link PlaceholderText}.
@@ -45,5 +60,56 @@ public interface PlaceholderParser extends CatalogType {
      * @return The {@link Text}
      */
     Text parse(PlaceholderText placeholderText);
+
+    /**
+     * A builder that creates {@link PlaceholderParser}
+     */
+    interface Builder extends ResettableBuilder<PlaceholderParser, Builder> {
+
+        /**
+         * The plugin instance or {@link PluginContainer} that this parser is
+         * being provided by.
+         *
+         * @param plugin The plugin or {@link PluginContainer}
+         * @return This builder, for chaining
+         */
+        PlaceholderParser.Builder plugin(Object plugin);
+
+        /**
+         * The un-namespaced ID of the parser.
+         *
+         * <p>This will reject any ID that contains a colon.</p>
+         *
+         * @param id The un-namespaced ID
+         * @return This builder, for chaining
+         */
+        PlaceholderParser.Builder id(String id);
+
+        /**
+         * The human friendly name of this parser
+         *
+         * @param name The name
+         * @return This builder, for chaining
+         */
+        PlaceholderParser.Builder name(String name);
+
+        /**
+         * The function that converts a {@link PlaceholderText} to {@link Text}
+         *
+         * @param parser The function
+         * @return This builder, for chaining
+         */
+        PlaceholderParser.Builder parser(Function<PlaceholderText, Text> parser);
+
+        /**
+         * Builds a {@link PlaceholderParser}
+         *
+         * @return The parser
+         * @throws IllegalStateException if the plugin, ID or parser has not
+         *      been has not been specified.
+         */
+        PlaceholderParser build() throws IllegalStateException;
+
+    }
 
 }
