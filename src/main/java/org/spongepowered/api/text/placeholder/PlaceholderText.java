@@ -37,10 +37,18 @@ import org.spongepowered.api.util.ResettableBuilder;
  * along with contextual data in the supplied {@link PlaceholderContext},
  * enabling its use in a {@link Text} object.</p>
  *
- * <p>While such placeholders will generally be built from tokenised strings,
+ * <p>While such placeholders will generally be built from tokenized strings,
  * these objects make no assumption about the format of text templating. Such a
  * system can therefore be used by other templating engines without conforming
  * to a particular standard.</p>
+ *
+ * <p>While the {@link PlaceholderContext} is fixed when this object is created,
+ * {@link PlaceholderParser#parse(PlaceholderContext)} is not called until
+ * {@link #toText()} is called. Thus, any {@link Text} object that is created
+ * will reflect the time that the {@link Text} object was requested, and not when
+ * this object itself was created. It therefore follows that implementations must
+ * not cache the result of {@link #toText()} unless it is known that the supplied
+ * parser is <strong>not</strong> sensitive to the time of invocation.</p>
  */
 public interface PlaceholderText extends TextRepresentable {
 
