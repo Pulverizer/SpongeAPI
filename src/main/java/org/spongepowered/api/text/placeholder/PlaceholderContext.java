@@ -131,7 +131,7 @@ public interface PlaceholderContext {
          *
          * @see #getAssociatedObject()
          */
-        Builder setAssociatedObject(Object object);
+        Builder setAssociatedObject(@Nullable Object object);
 
         /**
          * Sets the {@link Object} to use as a source of information
