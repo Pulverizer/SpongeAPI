@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.service.placeholder;
+package org.spongepowered.api.text.placeholder;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;
@@ -50,16 +50,16 @@ public interface PlaceholderParser extends CatalogType {
     }
 
     /**
-     * Creates a {@link Text} based on the provided {@link PlaceholderText}.
+     * Creates a {@link Text} based on the provided {@link PlaceholderContext}.
      *
      * <p>This method should not throw an error, instead returning
-     * {@link Text#EMPTY} if the supplied {@link PlaceholderText} is not
+     * {@link Text#EMPTY} if the supplied {@link PlaceholderContext} is not
      * valid.</p>
      *
-     * @param placeholderText The {@link PlaceholderText}
+     * @param placeholderContext The {@link PlaceholderContext}
      * @return The {@link Text}
      */
-    Text parse(PlaceholderText placeholderText);
+    Text parse(PlaceholderContext placeholderContext);
 
     /**
      * A builder that creates {@link PlaceholderParser}
@@ -94,12 +94,12 @@ public interface PlaceholderParser extends CatalogType {
         PlaceholderParser.Builder name(String name);
 
         /**
-         * The function that converts a {@link PlaceholderText} to {@link Text}
+         * The function that converts a {@link PlaceholderContext} to {@link Text}
          *
          * @param parser The function
          * @return This builder, for chaining
          */
-        PlaceholderParser.Builder parser(Function<PlaceholderText, Text> parser);
+        PlaceholderParser.Builder parser(Function<PlaceholderContext, Text> parser);
 
         /**
          * Builds a {@link PlaceholderParser}

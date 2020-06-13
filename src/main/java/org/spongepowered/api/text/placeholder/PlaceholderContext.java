@@ -22,14 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.service.placeholder;
+package org.spongepowered.api.text.placeholder;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.TextRepresentable;
-import org.spongepowered.api.text.channel.MessageReceiver;
 import org.spongepowered.api.util.ResettableBuilder;
 
 import java.util.Optional;
@@ -37,35 +35,20 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 /**
- * A {@link TextRepresentable} that can be used in {@link Text} building methods
- * that represents a placeholder in text.
- *
- * <p>A {@link PlaceholderText} is the collection of a {@link PlaceholderParser}
- * along with contextual data, enabling its use in a {@link Text} object.</p>
- *
- * <p>While such placeholders will generally be built from tokenised strings,
- * these objects make no assumption about the format of text templating. Such a
- * system can therefore be used by other templating engines without conforming
- * to a particular standard.</p>
+ * Contains the context that a {@link PlaceholderParser} can use to determine
+ * what to display.
  */
-public interface PlaceholderText extends TextRepresentable {
+public interface PlaceholderContext {
 
     /**
-     * Gets a builder for creating {@link PlaceholderText}.
+     * Creates a {@link PlaceholderContext} for a {@link PlaceholderParser} to
+     * consume.
      *
-     * @return A {@link Builder}
+     * @return The builder.
      */
-    static PlaceholderText.Builder builder() {
-        return Sponge.getServiceManager().provideUnchecked(PlaceholderService.class).placeholderBuilder();
+    static Builder builder() {
+        return Sponge.getRegistry().createBuilder(Builder.class);
     }
-
-    /**
-     * Gets the {@link PlaceholderParser} that handles this
-     * placeholder.
-     *
-     * @return The {@link PlaceholderParser}
-     */
-    PlaceholderParser getParser();
 
     /**
      * If provided, the {@link Object} which to pull information from
@@ -112,16 +95,7 @@ public interface PlaceholderText extends TextRepresentable {
     /**
      * A builder for {@link PlaceholderText} objects.
      */
-    interface Builder extends ResettableBuilder<PlaceholderText, Builder> {
-
-        /**
-         * Sets the token that represents a {@link PlaceholderParser} for use
-         * in this {@link PlaceholderText}.
-         *
-         * @param parser The {@link PlaceholderParser} to use
-         * @return This, for chaining
-         */
-        Builder setParser(PlaceholderParser parser);
+    interface Builder extends ResettableBuilder<PlaceholderContext, Builder> {
 
         /**
          * Sets the {@link Object} to use as a source of information
@@ -130,7 +104,7 @@ public interface PlaceholderText extends TextRepresentable {
          * @param player The player to associate this text with.
          * @return This, for chaining
          *
-         * @see PlaceholderText#getAssociatedObject()
+         * @see #getAssociatedObject()
          */
         default Builder setAssociatedObject(Player player) {
             final UUID uuid = player.getUniqueId();
@@ -155,7 +129,7 @@ public interface PlaceholderText extends TextRepresentable {
          * @param object The {@link Object} to associate this text with.
          * @return This, for chaining
          *
-         * @see PlaceholderText#getAssociatedObject()
+         * @see #getAssociatedObject()
          */
         Builder setAssociatedObject(Object object);
 
@@ -166,21 +140,20 @@ public interface PlaceholderText extends TextRepresentable {
          * @param supplier A {@link Supplier} that provides the {@link Object}
          * @return This, for chaining
          *
-         * @see PlaceholderText#getAssociatedObject()
+         * @see #getAssociatedObject()
          */
         Builder setAssociatedObject(@Nullable Supplier<Object> supplier);
 
         /**
          * Sets a string that represents variables for the supplied token.
          * The format of this argument string is dependent on the parser
-         * supplied to {@link #setParser(PlaceholderParser)} and thus is
-         * not prescribed here.
+         * that consumes this string and thus is not prescribed here.
          *
          * @param string The argument string, may be null to reset to
          *      the default argument string
          * @return This, for chaining
          *
-         * @see PlaceholderText#getArgumentString()
+         * @see #getArgumentString()
          */
         Builder setArgumentString(@Nullable String string);
 
@@ -192,7 +165,7 @@ public interface PlaceholderText extends TextRepresentable {
          *  or the associated {@link PlaceholderParser} could not validate the
          *  built {@link PlaceholderText}, if applicable.
          */
-        PlaceholderText build() throws IllegalStateException;
+        PlaceholderContext build() throws IllegalStateException;
 
     }
 

@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.api.service.placeholder;
+package org.spongepowered.api.text.placeholder;
 
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
